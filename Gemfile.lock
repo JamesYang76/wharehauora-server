@@ -35,8 +35,8 @@ GEM
       erubi (~> 1.4)
       rails-dom-testing (~> 2.0)
       rails-html-sanitizer (~> 1.0, >= 1.0.3)
-    active_median (0.1.4)
-      activerecord
+    active_median (0.2.2)
+      activerecord (>= 4.2)
     activejob (5.1.6)
       activesupport (= 5.1.6)
       globalid (>= 0.3.6)
