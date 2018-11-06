@@ -42,7 +42,7 @@ class Home < ApplicationRecord
   def handle_invalid_mqtt_user(gateway_mac_address)
     delete_by_username_mqtt_user(gateway_mac_address)
     remove_mac_address_other_home(gateway_mac_address)
-    "The Mac #{gateway_mac_address} is reused"
+    "The Mac Address #{gateway_mac_address} is reused"
   end
 
   def remove_mac_address_other_home(mac_addr)
