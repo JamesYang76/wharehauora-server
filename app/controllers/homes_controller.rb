@@ -39,7 +39,7 @@ class HomesController < ApplicationController
 
   def update
     if @home.update(home_params)
-      @home.provision_mqtt! if @home.gateway_mac_address.present?
+      flash[:notice] = @home.provision_mqtt! if @home.gateway_mac_address.present?
     end
     respond_with(@home)
   end
