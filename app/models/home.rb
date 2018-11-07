@@ -39,12 +39,6 @@ class Home < ApplicationRecord
     out_msg
   end
 
-  def handle_invalid_mqtt_user(gateway_mac_address)
-    delete_by_username_mqtt_user(gateway_mac_address)
-    remove_mac_address_other_home(gateway_mac_address)
-    "The Mac Address #{gateway_mac_address} is reused"
-  end
-
   def gateway
     Gateway.find_by(mac_address: gateway_mac_address)
   end
@@ -63,5 +57,11 @@ class Home < ApplicationRecord
 
   def remove_mac_address_other_home(mac_addr)
     Home.where.not(id: id).where(gateway_mac_address: mac_addr).update(gateway_mac_address: nil)
+  end
+
+  def handle_invalid_mqtt_user(gateway_mac_address)
+    delete_by_username_mqtt_user(gateway_mac_address)
+    remove_mac_address_other_home(gateway_mac_address)
+    "The Mac Address #{gateway_mac_address} is reused"
   end
 end
