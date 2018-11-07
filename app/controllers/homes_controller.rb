@@ -28,8 +28,11 @@ class HomesController < ApplicationController
     authorize :home
     @home = Home.new(home_params)
     invite_new_owner
-    @home.save
-    respond_with(@home, location: home_rooms_path(@home))
+    if @home.save
+      respond_with(@home, location: home_rooms_path(@home))
+    else
+      respond_with(@home)
+    end
   end
 
   def edit
