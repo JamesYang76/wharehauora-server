@@ -59,12 +59,12 @@ RSpec.describe Home, type: :model do
     end
 
     it 'destory MattUser with mac address existed' do
-      @new_home.delete_by_username_mqtt_user(@mac_addr)
+      @new_home.send(:delete_by_username_mqtt_user, @mac_addr)
       expect(MqttUser.where(username: @mac_addr).count).to eq 0
     end
 
     it 'remove gateway_mac_address in other home' do
-      @new_home.remove_mac_address_other_home(@mac_addr)
+      @new_home.send(:remove_mac_address_other_home, @mac_addr)
       expect(Home.where(gateway_mac_address: @mac_addr).count).to eq 1
       expect(Home.find_by_gateway_mac_address(@mac_addr).id).to eq @new_home.id
       expect(Home.find_by_id(@old_home.id).gateway_mac_address).to eq nil
