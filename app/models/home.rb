@@ -31,10 +31,7 @@ class Home < ApplicationRecord
     out_msg = nil
     return if gateway_mac_address.blank?
     ActiveRecord::Base.transaction do
-      mu = MqttUser.where(home: self).first_or_initialize
-      out_msg = handle_invalid_mqtt_user(gateway_mac_address) unless mu.valid?
-      mu.provision!
-      mu.save!
+      out_msg = processing_provision
     end
     out_msg
   end
@@ -51,17 +48,21 @@ class Home < ApplicationRecord
     self.gateway_mac_address = gateway_mac_address.gsub(/\s/, '').delete(':').upcase
   end
 
-  def delete_by_username_mqtt_user(mac_addr)
-    MqttUser.where(username: mac_addr).destroy_all
+  def processing_provision
+    out_msg = nil
+    mu = MqttUser.where(home: self).first_or_initialize
+    if mu.valid?
+      mu.provision!
+      mu.save!
+    else
+      out_msg = make_notification_message(mu)
+    end
+    out_msg
   end
 
-  def remove_mac_address_other_home(mac_addr)
-    Home.where.not(id: id).where(gateway_mac_address: mac_addr).update(gateway_mac_address: nil)
-  end
-
-  def handle_invalid_mqtt_user(gateway_mac_address)
-    delete_by_username_mqtt_user(gateway_mac_address)
-    remove_mac_address_other_home(gateway_mac_address)
-    "The Mac Address #{gateway_mac_address} is reused"
+  def make_notification_message(mu)
+    home_name = Home.where.not(id: id).find_by(gateway_mac_address: gateway_mac_address)&.name
+    return "The Mac Address #{gateway_mac_address} is already used in #{home_name} House" if home_name
+    mu.errors.messages
   end
 end
