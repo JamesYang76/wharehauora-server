@@ -49,7 +49,6 @@ RSpec.describe Home, type: :model do
   end
 
   describe 'provisions user with duplicate mac address' do
-
     before(:each) do
       @mac_addr = '123A456B780'
       @home = FactoryBot.create(:home, gateway_mac_address: @mac_addr)
@@ -68,6 +67,5 @@ RSpec.describe Home, type: :model do
       message = @new_home.provision_mqtt!
       expect(message).not_to eq nil
     end
-
   end
 end
