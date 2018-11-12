@@ -37,6 +37,10 @@ class Home < ApplicationRecord
     end
   end
 
+  def provisioned?
+    !mqtt_user.nil?
+  end
+
   def gateway
     Gateway.find_by(mac_address: gateway_mac_address)
   end

@@ -47,4 +47,17 @@ RSpec.describe Home, type: :model do
     it { expect(home.mqtt_user.username).to eq home.gateway_mac_address }
     it { expect(home.mqtt_user.password).to eq '29b4c341f18e7d0fd94edc0602e5e135' }
   end
+
+  describe 'check provisioned?' do
+    let(:provision_home) { FactoryBot.create :home, gateway_mac_address: 'abc' }
+    let(:home) { FactoryBot.create :home, gateway_mac_address: 'bca' }
+
+    before do
+      ENV['SALT'] = 'hello'
+      provision_home.provision_mqtt!
+    end
+
+    it { expect(provision_home.provisioned?).to eq true }
+    it { expect(home.provisioned?).to eq false }
+  end
 end
