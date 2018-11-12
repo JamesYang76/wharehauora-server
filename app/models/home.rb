@@ -28,12 +28,13 @@ class Home < ApplicationRecord
                                   format: { with: /\A[A-F0-9]*\z/, message: 'should have only letters A-F and numbers' }
 
   def provision_mqtt!
-    out_msg = nil
     return if gateway_mac_address.blank?
+
     ActiveRecord::Base.transaction do
-      out_msg = processing_provision
+      mu = MqttUser.where(home: self).first_or_initialize
+      mu.provision!
+      mu.save!
     end
-    out_msg
   end
 
   def gateway
@@ -46,23 +47,5 @@ class Home < ApplicationRecord
     return if gateway_mac_address.blank?
 
     self.gateway_mac_address = gateway_mac_address.gsub(/\s/, '').delete(':').upcase
-  end
-
-  def processing_provision
-    out_msg = nil
-    mu = MqttUser.where(home: self).first_or_initialize
-    if mu.valid?
-      mu.provision!
-      mu.save!
-    else
-      out_msg = make_notification_message(mu)
-    end
-    out_msg
-  end
-
-  def make_notification_message(mu)
-    home_name = Home.where.not(id: id).find_by(gateway_mac_address: gateway_mac_address)&.name
-    return "The Mac Address #{gateway_mac_address} is already used in #{home_name} House" if home_name
-    mu.errors.messages
   end
 end

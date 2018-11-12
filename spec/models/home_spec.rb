@@ -47,25 +47,4 @@ RSpec.describe Home, type: :model do
     it { expect(home.mqtt_user.username).to eq home.gateway_mac_address }
     it { expect(home.mqtt_user.password).to eq '29b4c341f18e7d0fd94edc0602e5e135' }
   end
-
-  describe 'provisions user with duplicate mac address' do
-    let!(:home) { FactoryBot.build(:home, gateway_mac_address: '123A456B780') }
-    let!(:new_home) { FactoryBot.build(:home, gateway_mac_address: '123A456B780') }
-
-    before do
-      home.save(validate: false)
-      new_home.save(validate: false)
-      home.provision_mqtt!
-    end
-
-    it 'processing_provision with gateway_mac_address existed' do
-      message = new_home.send(:processing_provision)
-      expect(message).not_to eq nil
-    end
-
-    it 'provision_mqtt! with gateway_mac_address existed' do
-      message = new_home.provision_mqtt!
-      expect(message).not_to eq nil
-    end
-  end
 end

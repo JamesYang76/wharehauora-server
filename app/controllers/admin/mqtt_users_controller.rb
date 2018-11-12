@@ -9,7 +9,7 @@ class Admin::MqttUsersController < Admin::AdminController
   def create
     authorize :mqtt_user
     @home = policy_scope(Home).find(params[:home_id])
-    message = @home.provision_mqtt!
-    redirect_to admin_mqtt_users_path, notice: message
+    @home.provision_mqtt!
+    redirect_to admin_mqtt_users_path
   end
 end
