@@ -31,7 +31,7 @@
           %td= home&.mqtt_user&.password
           %td= home&.mqtt_user&.provisioned_at
           %td
-            - if home.gateway_mac_address.present?
+            - if home.gateway_mac_address.present? && !home.provisioned?
               = link_to 'Provision', admin_mqtt_users_path(home_id: home.id),
                 method: 'post', class: 'btn'
 
