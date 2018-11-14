@@ -122,4 +122,18 @@ RSpec.describe 'Rooms', type: :feature do
     it { expect(home.users.size).to eq(7) }
     include_examples 'Test as all user types'
   end
+
+  context 'home has has already provision' do
+    let(:provision_home) { FactoryBot.create :home, gateway_mac_address: 'abc' }
+
+    before do
+      login_as(FactoryBot.create(:admin))
+      ENV['SALT'] = 'hello'
+      provision_home.provision_mqtt!
+      visit home_rooms_path(provision_home.id)
+    end
+
+    it { is_expected.to have_text(provision_home.name) }
+    it { is_expected.to have_text('This whare has already provisioned.') }
+  end
 end
