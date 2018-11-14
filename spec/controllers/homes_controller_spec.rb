@@ -96,6 +96,12 @@ RSpec.describe HomesController, type: :controller do
         it { expect(subject.name).to eq "Bob\'s home" }
         it { expect(subject.owner).to eq user }
       end
+
+      describe 'Creating a home with same mac address' do
+        before { FactoryBot.create(:home, gateway_mac_address: '123A456B780') }
+        before { post :create, params: { home: { name: 'My new home', gateway_mac_address: '123A456B780' } } }
+        it { expect(response).to render_template('new') }
+      end
     end
 
     describe 'DELETE destroy' do
